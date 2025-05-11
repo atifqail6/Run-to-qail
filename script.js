@@ -1,37 +1,33 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
     const player = document.getElementById("player");
-    const coin = document.getElementById("coin");
+    const obstacle = document.getElementById("obstacle");
 
-    document.addEventListener("touchstart", function (e) {
-        const touchX = e.touches[0].clientX;
-        const touchY = e.touches[0].clientY;
+    let isJumping = false;
 
-        player.style.left = touchX - player.offsetWidth / 2 + "px";
-        player.style.top = touchY - player.offsetHeight / 2 + "px";
-
-        checkCollision();
+    // لوبغاړی ټوپ وهي
+    window.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowUp" && !isJumping) {
+            jump();
+        }
     });
 
-    function checkCollision() {
-        const playerRect = player.getBoundingClientRect();
-        const coinRect = coin.getBoundingClientRect();
+    function jump() {
+        isJumping = true;
+        player.classList.add("jump");
+        setTimeout(() => {
+            player.classList.remove("jump");
+            isJumping = false;
+        }, 500);
+    }
 
-        if (
-            playerRect.left < coinRect.right &&
-            playerRect.right > coinRect.left &&
-            playerRect.top < coinRect.bottom &&
-            playerRect.bottom > coinRect.top
-        ) {
-            alert("Coin collected!");
-            moveCoin();
+    // ټکر پېژندنه
+    setInterval(() => {
+        let playerBottom = parseInt(window.getComputedStyle(player).getPropertyValue("bottom"));
+        let obstacleLeft = parseInt(window.getComputedStyle(obstacle).getPropertyValue("left"));
+
+        if (obstacleLeft < 110 && obstacleLeft > 50 && playerBottom < 100) {
+            alert("لوبه پای ته ورسیده!");
+            window.location.reload();
         }
-    }
-
-    function moveCoin() {
-        const randomX = Math.floor(Math.random() * (window.innerWidth - 30));
-        const randomY = Math.floor(Math.random() * (window.innerHeight - 30));
-
-        coin.style.left = randomX + "px";
-        coin.style.top = randomY + "px";
-    }
+    }, 10);
 });
